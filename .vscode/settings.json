@@ -1,0 +1,12 @@
+{
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "java.project.sourcePaths": ["src"],
+  "java.project.outputPath": "bin",
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "/Users/jintony/Downloads/bson-4.3.3.jar",
+    "/Users/jintony/Downloads/mongo-java-driver-3.12.10.jar",
+    "/Users/jintony/Downloads/mongodb-driver-core-4.3.3.jar"
+  ]
+}
