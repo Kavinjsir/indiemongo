@@ -18,16 +18,19 @@ public class MongoOperator {
     this.collection = collection;
   }
 
+  // Verify if db connection to the collection is successful
   public void validateCollection() {
     System.out.println("Estimated number of documents: " + this.collection.estimatedDocumentCount());
     System.out.println("Count number of documents: " + this.collection.countDocuments());
   }
 
-  // Add Date fields based on origin date string fields
-  private Document formatDocument(BsonDocument dc) {
-    BsonDocument data = dc.getDocument("data");
+  // Get document from json string
+  private Document formatDocument(String json) {
+    // Get nested "data" json obj from raw string
+    BsonDocument data = BsonDocument.parse(json).getDocument("data");
     Document dataDoc = Document.parse(data.toJson());
 
+    // Add Date fields based on origin date string fields
     Date closeDate = DateUtils.getDateFromISOStr(dataDoc.getString("close_date"));
     dataDoc.put("local_close_date", closeDate);
 
@@ -39,8 +42,7 @@ public class MongoOperator {
 
   // Load json string to mongo collection
   public void insertJSONString(String json) {
-    BsonDocument dc = BsonDocument.parse(json);
-    Document data =  formatDocument(dc);
+    Document data =  formatDocument(json);
     this.collection.insertOne(data);
   }
 

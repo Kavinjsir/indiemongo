@@ -18,6 +18,12 @@ public class DateUtils {
     }
   }
 
+  /**
+   * Get substring of date from a ISO date string
+   * (Fetch yyyy-MM-dd from yyyy-MM-ddTHH:mm:ssZ)
+   * @param date
+   * @return
+   */
   public static String retreiveDate(String date) {
     return date.split("T")[0];
   }
