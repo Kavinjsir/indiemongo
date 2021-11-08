@@ -1,5 +1,6 @@
 import java.io.Console;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 
 import com.mongodb.MongoClient;
@@ -12,9 +13,6 @@ public class App {
 
 
   public static void loadJSONIntoMongoDB(MongoOperator mongoOperator, String SOURCE_PATH) throws IOException {
-    // Clear up collection
-    mongoOperator.clearUp();
-
     // Convert each line in source file to Mongo recognizable Document.
     FileLoader.ContentHandler jsonConverter = new FileLoader.ContentHandler() {
       @Override
@@ -47,6 +45,9 @@ public class App {
         mongoOperator.sortByOpenDate();
       }
       else if (selection.equals("2")) {
+        System.out.println("Please input key word: ");
+        String keyword = console.readLine().trim();
+  
         System.out.println("Please input start date(yyyy-mm-dd): ");
         String startDateStr = console.readLine().trim();
         Date startDate = DateUtils.getDateFromISOStr(startDateStr);
@@ -54,8 +55,8 @@ public class App {
         System.out.println("Please input end date(yyyy-mm-dd): ");
         String endDateStr = console.readLine().trim();
         Date endDate = DateUtils.getDateFromISOStr(endDateStr);
-  
-        mongoOperator.getItemsByDateRange(startDate, endDate);
+
+        mongoOperator.getItemsByDateRange(keyword, startDate, endDate);
       }
     }
   
@@ -80,12 +81,21 @@ public class App {
     MongoClient mongoClient = new MongoClient(DB_HOST, DB_PORT);
     MongoDatabase dbObj = mongoClient.getDatabase(DB_TABLE);
     MongoCollection<Document> col = dbObj.getCollection(DB_COLLECTION);
+
     // Client instance to operate mongodb.
     MongoOperator mongoOperator = new MongoOperator(col);
+
+    // Clear up collection
+    mongoOperator.clearUp();
 
     // Task 1
     // Load data into MongoDB
     loadJSONIntoMongoDB(mongoOperator, SOURCE_PATH);
+
+    // Create field indexes for full text search
+    // FIXME: MongoDB only allows one field to be text search
+    String[] fields =  { "title" };
+    mongoOperator.createTextIndex(Arrays.asList(fields));
 
     // Task 2
     // Interact with User to query data by input date

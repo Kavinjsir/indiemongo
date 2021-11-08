@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
 
 import static com.mongodb.client.model.Sorts.*;
 
@@ -16,6 +17,18 @@ public class MongoOperator {
 
   public MongoOperator(MongoCollection<Document> collection) {
     this.collection = collection;
+  }
+
+  // Add index for fields to enable full text search
+  public void createTextIndex(List<String> fields) {
+    fields.forEach(f -> {
+      try {
+        this.collection.createIndex(Indexes.text(f));
+      } catch (Exception e) {
+        System.err.println("Failed to create index for field:" + f);
+        e.printStackTrace();
+      }
+    });
   }
 
   // Verify if db connection to the collection is successful
@@ -52,9 +65,10 @@ public class MongoOperator {
     displayResults(results);
   }
 
-  public void getItemsByDateRange(Date startDate, Date endDate) {
+  public void getItemsByDateRange(String keyword, Date startDate, Date endDate) {
     List<Document> results = new ArrayList<Document>();
     Bson filter = Filters.and(
+      Filters.text(keyword),
       Filters.gte("local_close_date", startDate),
       Filters.lte("local_open_date", endDate)
     );
@@ -75,10 +89,11 @@ public class MongoOperator {
       closeDate = DateUtils.retreiveDate(dc.getString("close_date"));
 
       System.out.println("======");
-      System.out.println("Title:" + title);
-      System.out.println("Open date:" + openDate);
-      System.out.println("Close date:" + closeDate);
+      System.out.println("Title: " + title);
+      System.out.println("Open date: " + openDate);
+      System.out.println("Close date: " + closeDate);
     }
     System.out.println("======");
+    System.out.println("");
   }
 }
