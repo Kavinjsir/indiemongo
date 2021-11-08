@@ -74,10 +74,13 @@ public class MongoOperator {
     );
     this.collection.find(filter).into(results);
 
-    if (results.size() == 0) {
-      System.out.printf("No items found for the query\n\n");
+    int queryResultLen = results.size();
+    if (queryResultLen == 0) {
+      System.out.printf("No, there is no '%s' entry\n\n", keyword);
       return;
     }
+
+    System.out.printf("Yes, there is an entry about '%s' on :\n", keyword);
 
     displayResults(results);
   }
@@ -88,6 +91,7 @@ public class MongoOperator {
 
   private void displayResults(List<Document> results) {
     String title, openDate, closeDate;
+
     for (Document dc: results) {
       title = dc.getString("title");
       openDate = DateUtils.retreiveDate(dc.getString("open_date"));
@@ -98,7 +102,7 @@ public class MongoOperator {
       System.out.println("Open date: " + openDate);
       System.out.println("Close date: " + closeDate);
     }
-    System.out.println("======");
-    System.out.println("");
+
+    System.out.println("======\n");
   }
 }
