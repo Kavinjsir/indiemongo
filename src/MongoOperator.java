@@ -74,6 +74,11 @@ public class MongoOperator {
     );
     this.collection.find(filter).into(results);
 
+    if (results.size() == 0) {
+      System.out.printf("No items found for the query\n\n");
+      return;
+    }
+
     displayResults(results);
   }
 
