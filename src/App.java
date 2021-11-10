@@ -1,6 +1,5 @@
 import java.io.Console;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 
 import com.mongodb.MongoClient;
@@ -93,9 +92,8 @@ public class App {
     loadJSONIntoMongoDB(mongoOperator, SOURCE_PATH);
 
     // Create field indexes for full text search
-    // FIXME: MongoDB only allows one field to be text search
-    String[] fields =  { "title" };
-    mongoOperator.createTextIndex(Arrays.asList(fields));
+    String[] fields =  { "title", "tags", "tagline", "category", "product_type" };
+    mongoOperator.createTextIndex(fields);
 
     // Task 2
     // Interact with User to query data by input date

@@ -20,15 +20,19 @@ public class MongoOperator {
   }
 
   // Add index for fields to enable full text search
-  public void createTextIndex(List<String> fields) {
-    fields.forEach(f -> {
-      try {
-        this.collection.createIndex(Indexes.text(f));
-      } catch (Exception e) {
-        System.err.println("Failed to create index for field:" + f);
-        e.printStackTrace();
-      }
-    });
+  public void createTextIndex(String[] fields) {
+    Bson[] textFields = new Bson[fields.length];
+    for (int i = 0; i < fields.length; i++) {
+      textFields[i] = Indexes.text(fields[i]);
+    }
+    Bson textIndex = Indexes.compoundIndex(textFields);
+
+    try {
+      this.collection.createIndex(textIndex);
+    } catch (Exception e) {
+      System.err.println("Failed to create index for field:" + fields);
+      e.printStackTrace();
+    }
   }
 
   // Verify if db connection to the collection is successful
